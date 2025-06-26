@@ -1,9 +1,9 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
-import { useAuthStore } from './store/authStore';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Clientes } from './pages/Clientes';
+
 
 function App() {
   return (
@@ -19,6 +19,14 @@ function App() {
           }
         />
         <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/clientes"
+          element={
+            <ProtectedRoute>
+              <Clientes />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

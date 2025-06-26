@@ -8,6 +8,6 @@ interface LoginPayload {
 }
 
 export async function login(payload: LoginPayload) {
-  const response = await axios.post(`${API_URL}/login`, payload);
+  const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, payload);
   return response.data;
 }
