@@ -29,6 +29,8 @@ export const Productos = () => {
   });
   const [dialogVisible, setDialogVisible] = useState(false);
 
+  const [filtroNombre, setFiltroNombre] = useState('');
+
   const openNuevoProducto = () => {
     setProductoNuevo({ nombre: '', precio: 0, stock: 0 });
     setProductoEditando(null);
@@ -123,6 +125,11 @@ export const Productos = () => {
     </div>
   );
 
+  // Filtrar productos por nombre para la búsqueda
+  const productosFiltrados = productos.filter((p) =>
+    p.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
+  );
+
   return (
     <MainLayout>
       <Toast ref={toast} />
@@ -195,21 +202,34 @@ export const Productos = () => {
       <Card title="Gestión de Productos" className="mt-4">
         <div className="flex justify-content-between align-items-center mb-3">
           <h4 className="m-0">Listado de Productos</h4>
-          <Button
-            label="Nuevo Producto"
-            icon="pi pi-plus"
-            onClick={openNuevoProducto}
-            className="p-button-sm"
-          />
+          <div className="flex align-items-center gap-2">
+            <span className="p-input-icon-left">
+              <i className="pi pi-search" />
+              <InputText
+                placeholder="Buscar por nombre"
+                value={filtroNombre}
+                onChange={(e) => setFiltroNombre(e.target.value)}
+                className="p-inputtext-sm"
+              />
+            </span>
+            <Button
+              label="Nuevo Producto"
+              icon="pi pi-plus"
+              onClick={openNuevoProducto}
+              className="p-button-sm"
+            />
+          </div>
         </div>
 
         <DataTable
-          value={productos}
+          value={productosFiltrados}
           paginator
-          rows={5}
+          rows={10}
           stripedRows
           responsiveLayout="scroll"
           className="w-full text-sm"
+          sortField="nombre"
+          sortOrder={1} // Orden ascendente por nombre
         >
           <Column field="id" header="ID" sortable />
           <Column field="nombre" header="Nombre" sortable />
