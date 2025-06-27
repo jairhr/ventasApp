@@ -3,6 +3,7 @@ import { PanelMenu } from 'primereact/panelmenu';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import classNames from 'classnames';
+import { useAuthStore } from '../store/authStore';
 
 interface MenuSidebarProps {
   collapsed?: boolean;
@@ -11,7 +12,11 @@ interface MenuSidebarProps {
 }
 
 export const MenuSidebar = ({ collapsed = false, onToggleCollapse, onNavigate }: MenuSidebarProps) => {
+  const roles = useAuthStore((state) => state.roles);
   const navigate = useNavigate();
+
+  const isAdmin = roles.includes('ROLE_ADMIN');
+  const isOperador = roles.includes('ROLE_OPERADOR');
 
   const go = (path: string) => {
     navigate(path);
@@ -20,9 +25,11 @@ export const MenuSidebar = ({ collapsed = false, onToggleCollapse, onNavigate }:
 
   const items = [
     { label: 'Dashboard', icon: 'pi pi-home', command: () => go('/dashboard') },
-    { label: 'Clientes', icon: 'pi pi-users', command: () => go('/clientes') },
-    { label: 'Ventas', icon: 'pi pi-shopping-cart', command: () => go('/ventas') },
-    { label: 'Productos', icon: 'pi pi-box', command: () => go('/productos') },
+    ...(isAdmin ? [{ label: 'Clientes', icon: 'pi pi-users', command: () => go('/clientes') }] : []),
+    ...(isAdmin ? [{ label: 'Ventas', icon: 'pi pi-shopping-cart', command: () => go('/ventas') }] : []),
+    ...(isAdmin || isOperador
+      ? [{ label: 'Productos', icon: 'pi pi-box', command: () => go('/productos') }]
+      : []),
     {
       label: 'Cerrar Sesión',
       icon: 'pi pi-sign-out',

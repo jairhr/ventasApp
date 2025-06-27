@@ -24,23 +24,25 @@ function App() {
         <Route
           path="/clientes"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
               <Clientes />
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/productos"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_OPERADOR']}>
               <Productos />
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/ventas"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
               <Ventas />
             </ProtectedRoute>
           }

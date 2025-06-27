@@ -28,7 +28,7 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
 
         UserDetails user = (UserDetails) auth.getPrincipal();
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user);
 
         return new LoginResponse(token);
     }
