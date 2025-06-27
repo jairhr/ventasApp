@@ -7,6 +7,8 @@ import { Column } from 'primereact/column';
 import { Card } from 'primereact/card';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { InputText } from 'primereact/inputtext';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 export const ClientesList = () => {
   const token = useAuthStore(state => state.token);
@@ -31,6 +33,17 @@ export const ClientesList = () => {
       });
   }, [token]);
 
+
+
+  const exportarExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(clientesFiltrados);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Clientes');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'clientes.xlsx');
+  };
+
   // Filtrar clientes por nombre
   const clientesFiltrados = clientes.filter(c =>
     c.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
@@ -48,8 +61,7 @@ export const ClientesList = () => {
 
   return (
     <Card title="Lista de Clientes" className="mt-4">
-      {/* Input de búsqueda */}
-      <div className="mb-3 flex justify-content-end">
+      <div className="mb-3 flex justify-content-between align-items-center">
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
@@ -59,8 +71,14 @@ export const ClientesList = () => {
             className="p-inputtext-sm"
           />
         </span>
+        <button
+          className="p-button p-button-sm p-button-outlined"
+          onClick={exportarExcel}
+        >
+          <i className="pi pi-file-excel mr-2" />
+          Exportar a Excel
+        </button>
       </div>
-
       <DataTable
         value={clientesFiltrados}
         paginator

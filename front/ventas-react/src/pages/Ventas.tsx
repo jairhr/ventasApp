@@ -6,6 +6,8 @@ import { Card } from 'primereact/card';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const obtenerMesActual = () => {
   const fecha = new Date();
@@ -35,6 +37,35 @@ export const Ventas = () => {
       .finally(() => setLoading(false));
   };
 
+  const exportarEstadisticasAExcel = () => {
+    const wb = XLSX.utils.book_new();
+
+    const hojaTop = XLSX.utils.json_to_sheet(topProductos.map(p => ({
+      Producto: p.nombre,
+      Cantidad: p.cantidad
+    })));
+    XLSX.utils.book_append_sheet(wb, hojaTop, 'Top Productos');
+
+    const hojaCliente = XLSX.utils.json_to_sheet([
+      {
+        Cliente: mayorCliente?.cliente ?? 'N/A',
+        Total: mayorCliente?.total ?? 0
+      }
+    ]);
+    XLSX.utils.book_append_sheet(wb, hojaCliente, 'Mayor Cliente');
+
+    const hojaTotal = XLSX.utils.json_to_sheet([
+      {
+        Mes: obtenerMesActual(),
+        Total: totalMensual ?? 0
+      }
+    ]);
+    XLSX.utils.book_append_sheet(wb, hojaTotal, 'Total Mensual');
+
+    const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'estadisticas_ventas.xlsx');
+  };
+
   useEffect(() => {
     loadData();
   }, [token]);
@@ -52,9 +83,7 @@ export const Ventas = () => {
   return (
     <MainLayout>
       <div className="p-4 flex flex-column gap-5">
-        {/* Fila superior con 2 cards */}
         <div className="flex flex-column md:flex-row gap-4">
-          {/* Top 3 Productos */}
           <div className="flex-1">
             <Card className="shadow-2" title="Top 3 Productos más vendidos">
               <ul className="list-none p-0 m-0">
@@ -79,7 +108,6 @@ export const Ventas = () => {
             </Card>
           </div>
 
-          {/* Mayor Cliente */}
           <div className="flex-1">
             <Card className="shadow-2" title="Cliente con Mayor Compra">
               <div className="flex flex-column align-items-center">
@@ -94,10 +122,12 @@ export const Ventas = () => {
           </div>
         </div>
 
-        {/* Total de Ventas Mensuales */}
         <div>
           <Card className="shadow-2" title={`Total de Ventas - ${obtenerMesActual()}`}>
-            <div className="flex flex-column align-items-center justify-content-center" style={{ minHeight: '10rem' }}>
+            <div
+              className="flex flex-column align-items-center justify-content-center"
+              style={{ minHeight: '10rem' }}
+            >
               <i className="pi pi-dollar text-7xl text-success mb-4"></i>
               <h2 className="text-4xl font-bold">${totalMensual?.toLocaleString() ?? '0.00'}</h2>
               <small className="text-color-secondary">Ingresos totales del mes actual</small>
@@ -105,9 +135,19 @@ export const Ventas = () => {
           </Card>
         </div>
 
-        {/* Botón actualizar */}
-        <div className="flex justify-content-center">
-          <Button icon="pi pi-refresh" label="Actualizar datos" onClick={loadData} className="p-button-text" />
+        <div className="flex justify-content-center gap-3">
+          <Button
+            icon="pi pi-refresh"
+            label="Actualizar datos"
+            onClick={loadData}
+            className="p-button-text"
+          />
+          <Button
+            icon="pi pi-file-excel"
+            label="Exportar a Excel"
+            onClick={exportarEstadisticasAExcel}
+            className="p-button-success"
+          />
         </div>
       </div>
     </MainLayout>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import {
   fetchProductos,
@@ -16,6 +16,9 @@ import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
+
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 export const Productos = () => {
   const token = useAuthStore((state) => state.token);
@@ -130,6 +133,23 @@ export const Productos = () => {
     p.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
   );
 
+  // Función para exportar a Excel la lista filtrada
+  const exportarExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      productosFiltrados.map(({ id, nombre, precio, stock }) => ({
+        ID: id,
+        Nombre: nombre,
+        Precio: precio,
+        Stock: stock
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Productos');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'productos.xlsx');
+  };
+
   return (
     <MainLayout>
       <Toast ref={toast} />
@@ -212,6 +232,14 @@ export const Productos = () => {
                 className="p-inputtext-sm"
               />
             </span>
+
+            <Button
+              label="Exportar a Excel"
+              icon="pi pi-file-excel"
+              className="p-button-sm p-button-outlined"
+              onClick={exportarExcel}
+            />
+
             <Button
               label="Nuevo Producto"
               icon="pi pi-plus"
