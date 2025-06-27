@@ -13,6 +13,9 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const username = useAuthStore((state) => state.username);
+  const roles = useAuthStore((state) => state.roles);
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth < 768); // inicia según ancho actual
 
   const handleLogout = () => {
@@ -39,7 +42,10 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <div className="flex flex-column min-h-screen">
       {/* Navbar */}
-      <header className="flex justify-content-between align-items-center px-4 py-3 shadow-2 bg-primary text-white z-5">
+      <header
+        style={{ backgroundColor: '#333', color: '#fff' }}
+        className="flex justify-content-between align-items-center px-4 py-3 shadow-2 z-5"
+      >
         <div className="flex align-items-center gap-2">
           <Button
             icon="pi pi-bars"
@@ -48,6 +54,15 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           />
           <h3 className="m-0 text-xl font-medium">Ventas App</h3>
         </div>
+
+        {/* Usuario y roles */}
+        <div className="flex flex-col mr-4 text-right">
+          <span className="font-semibold">{username || 'Invitado'}</span>
+          <small className="text-sm">
+            {roles.length > 0 ? roles.join(', ') : 'Sin roles'}
+          </small>
+        </div>
+
         <Button
           icon="pi pi-sign-out"
           label="Salir"
@@ -66,7 +81,10 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             sidebarCollapsed ? 'w-5rem' : 'w-16rem'
           )}
         >
-          <MenuSidebar collapsed={sidebarCollapsed} onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)} />
+          <MenuSidebar
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+          />
         </aside>
 
         {/* Contenido */}

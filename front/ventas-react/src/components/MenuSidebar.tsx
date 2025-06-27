@@ -34,7 +34,7 @@ export const MenuSidebar = ({ collapsed = false, onToggleCollapse, onNavigate }:
       label: 'Cerrar Sesión',
       icon: 'pi pi-sign-out',
       command: () => {
-        localStorage.removeItem('auth-storage');
+        useAuthStore.getState().logout();
         go('/login');
       }
     }

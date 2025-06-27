@@ -14,7 +14,6 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
     return <Navigate to="/login" replace />;
   }
 
-  // Si se definen roles permitidos y el usuario no tiene ninguno de ellos
   if (allowedRoles && !roles.some(role => allowedRoles.includes(role))) {
     return <Navigate to="/dashboard" replace />;
   }
