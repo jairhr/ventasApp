@@ -33,7 +33,7 @@ public class ProductoController {
         return servicio.crear(producto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}")    
     public Producto actualizar(@PathVariable Integer id, @RequestBody Producto producto) {
         return servicio.actualizar(id, producto);
     }
