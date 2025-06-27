@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { fetchClientes } from '../api/clientes';
 import type { Cliente } from '../types';

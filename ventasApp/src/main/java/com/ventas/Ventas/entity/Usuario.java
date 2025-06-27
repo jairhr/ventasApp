@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "usuarios", schema = "oms")
+@Table(name = "usuarios")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class Usuario {
@@ -30,7 +30,6 @@ public class Usuario {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "usuario_roles",
-            schema = "oms",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
