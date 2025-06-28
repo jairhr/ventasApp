@@ -28,3 +28,11 @@ Sistema backend en Spring Boot con base de datos PostgreSQL y frontend independi
 git clone <url-del-proyecto>
 cd <carpeta-del-proyecto>
 docker-compose up --build
+
+## La primera vez llenara la base de datos, por favor ejecutar lo siguiente
+CTRL + C
+docker-compose down
+docker-compose up --build
+
+## URL frontend
+Ingresar al navegador http://localhost:3000/login
